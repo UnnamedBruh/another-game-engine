@@ -22,6 +22,7 @@ var EMULATOR = (function() {
 								return 1;
 							}
 						}
+						break;
 					case 2:
 						i++;
 						switch (instructions[i]) {
