@@ -1,3 +1,4 @@
+var GAMEENGINE = (function() {
 	class CPU {
 		exec(instructions = new Uint8Array([0]), noHalt = false) {
 			let i = 0, run = true;
@@ -59,3 +60,4 @@
 			return status;
 		}
 	}
+})();
