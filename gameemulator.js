@@ -11,6 +11,16 @@ var EMULATOR = (function() {
 			function debug() {
 				console.warn("The error was found at instruction " + i);
 			}
+			function unknownAccumulator() {
+				if (noHalt) {
+					console.warn("/!\\ A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget] + ", so the default accumulator (Accumulator A) will be referenced.");
+					return 0;
+				}
+				console.warn("(x) SyntaxError: A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget]);
+				debug();
+				run = false, status = 1;
+				return 0;
+			}
 			while (run) {
 				switch (instructions[i]) {
 					case 1:
@@ -42,16 +52,7 @@ var EMULATOR = (function() {
 								break;
 							case 2:
 								i++;
-								accumulators[accumulatorTarget] = accumulators[instructions[i < 3 ? i : (function() {
-									if (noHalt) {
-										console.warn("/!\\ A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget] + ", so the default accumulator (Accumulator A) will be referenced.");
-										return 0;
-									}
-									console.warn("(x) SyntaxError: A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget]);
-									debug();
-									run = false, status = 1;
-									return 0;
-								})()]];
+								accumulators[accumulatorTarget] = accumulators[instructions[i < 4 ? i : unknownAccumulator()]];
 								break
 						}
 						break;
