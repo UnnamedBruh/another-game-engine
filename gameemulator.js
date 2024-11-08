@@ -74,4 +74,6 @@ var EMULATOR = (function() {
 			return status;
 		}
 	}
+	// This is a custom game engine emulator that is being worked on, so this is unfinished.
+	return CPU;
 })();
