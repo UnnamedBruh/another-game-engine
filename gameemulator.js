@@ -1,6 +1,11 @@
 var EMULATOR = (function() {
 	class CPU {
 		exec(instructions = new Uint8Array([0]), noHalt = false) {
+			/* Error Codes:
+   				0: While not an error code, the program ran successfully
+       				1: An unknown accumulator was referenced/requested
+	   			2: An unknown instruction was encountered
+   			*/
 			let i = 0, run = true;
 			let accumulators = new Uint16Array([0, 0, 0, 0]), accumulatorTarget = 0, accumulatorNames = ["A", "B", "C", "D"], status = 0;
 			function debug() {
@@ -42,7 +47,7 @@ var EMULATOR = (function() {
 										console.warn("/!\\ A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget] + ", so the default accumulator (Accumulator A) will be referenced.");
 										return 0;
 									}
-									console.warn("(x) A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget]);
+									console.warn("(x) SyntaxError: A non-existent accumulator was referenced for setting Accumulator " + accumulatorNames[accumulatorTarget]);
 									debug();
 									run = false, status = 1;
 									return 0;
@@ -55,6 +60,14 @@ var EMULATOR = (function() {
 					case 0:
 						run = false;
 						break;
+					default:
+						if (noHalt) {
+							console.warn("/!\\ An unknown instruction was encountered (instruction is " + instructions[i] + "), but that instruction will be ignored.");
+						} else {
+							console.warn("(x) SyntaxError: An unknown instruction was encountered (instruction is " + instructions[i] + ").");
+							run = false;
+							return 2;
+						}
 				}
 				i++;
 			}
