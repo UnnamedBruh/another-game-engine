@@ -1,14 +1,15 @@
 var EMULATOR = (function() {
+	const CPUDefaultMemory = new Uint16Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 	class CPU {
 		constructor() {
-			this.memory = new Uint16Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); // Make sure 256 digits of memory can be used
+			this.memory = Uint8Array.from(CPUDefaultMemory); // Make sure 256 digits of memory can be used
 		}
 		exec(instructions = new Uint8Array([0]), noHalt = false) {
 			/* Error Codes:
@@ -20,10 +21,16 @@ var EMULATOR = (function() {
 			/*
    				0: The program completely ends (no additional steps)
 				1: The program selects which accumulator would be requested for their value to be set
-				2: The program sets the selected accumulator's value to either an 8-bit integer (next instruction 0), 16-bit integer (next instruction 1), or an accumulator value (next instruction 2)
+				2: The program sets the selected accumulator's value to either an 8-bit integer (next instruction 0),
+	16-bit integer (next instruction 1), an accumulator value (next instruction 2), or one of the CPU's memory (next instruction 3)
+				3: The program adds the selected accumulator's value by either an 8-bit integer (next instruction 0),
+	16-bit integer (next instruction 1), an accumulator value (next instruction 2), or one of the CPU's memory (next instruction 3)
+				4: The memory is cleared entirely
+				5: The program sets a memory digit value to either an 8-bit integer (next instruction 0), 16-bit integer (next instruction 1),
+	an accumulator value (next instruction 2), or one of the CPU's memory (next instruction 3)
 			*/
 			if (this.memory.length !== 256 || !(this.memory instanceof Uint16Array)) throw new TypeError("The 'memory' property does not consist of 256 unsigned 16-bit integers! It has to only include 16-bit unsigned integers for the instructions to be fully executed.");
-			let i = 0, run = true;
+			let i = 0, run = true, memClear = true;
 			let accumulators = new Uint16Array([0, 0, 0, 0]), accumulatorTarget = 0, accumulatorNames = "ABCD", status = 0;
 			function debug() {
 				console.warn("The error was found at instruction " + i);
@@ -71,6 +78,10 @@ var EMULATOR = (function() {
 								i++;
 								accumulators[accumulatorTarget] = accumulators[instructions[i < 4 ? i : unknownAccumulator()]];
 								break;
+							case 3:
+								i++;
+								accumulators[accumulatorTarget] = this.memory[instructions[i]];
+								break;
 						}
 						break;
 					case 3:
@@ -89,7 +100,42 @@ var EMULATOR = (function() {
 								i++;
 								accumulators[accumulatorTarget] += accumulators[instructions[i < 4 ? i : unknownAccumulator()]];
 								break;
+							case 3:
+								i++;
+								accumulators[accumulatorTarget] = this.memory[instructions[i]];
+								break;
 						}
+						break;
+					case 4:
+						if (memClear) {
+							this.memory.fill(0);
+							memClear = false;
+						}
+						break;
+					case 5:
+						i++;
+						const memorySelect = instructions[i];
+						i++;
+						switch (instructions[i]) {
+							case 0:
+								i++;
+								this.memory[memorySelect] = instructions[i];
+								break;
+							case 1:
+								i++;
+								this.memory[memorySelect] = instructions[i] + (instructions[i + 1] << 8);
+								i++;
+								break;
+							case 2:
+								i++;
+								this.memory[memorySelect] = accumulators[instructions[i < 4 ? i : unknownAccumulator()]];
+								break;
+							case 3:
+								i++;
+								this.memory[memorySelect] = this.memory[instructions[i]];
+								break;
+						}
+						memClear = true;
 						break;
 					case undefined:
 						console.warn("(x) An instruction was encountered out-of-bounds, so the program has been halted to prevent serious consequences");
