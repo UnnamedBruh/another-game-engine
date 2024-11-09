@@ -9,7 +9,7 @@ var EMULATOR = (function() {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 	class CPU {
 		constructor() {
-			this.memory = Uint8Array.from(CPUDefaultMemory); // Make sure 256 digits of memory can be used
+			this.memory = Uint16Array.from(CPUDefaultMemory); // Make sure 256 digits of memory can be used
 		}
 		exec(instructions = new Uint8Array([0]), noHalt = false) {
 			/* Error Codes:
