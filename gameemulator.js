@@ -1,4 +1,5 @@
 var EMULATOR = (function() {
+	const children = [];
 	const CPUDefaultMemory = new Uint16Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -115,6 +116,7 @@ var EMULATOR = (function() {
 					case 5:
 						i++;
 						const memorySelect = instructions[i];
+						const prevMem = this.memory[memorySelect];
 						i++;
 						switch (instructions[i]) {
 							case 0:
@@ -135,7 +137,7 @@ var EMULATOR = (function() {
 								this.memory[memorySelect] = this.memory[instructions[i]];
 								break;
 						}
-						memClear = true;
+						memClear = memClear || prevMem !== this.memory[memorySelect];
 						break;
 					case undefined:
 						console.warn("(x) An instruction was encountered out-of-bounds, so the program has been halted to prevent serious consequences");
@@ -158,6 +160,5 @@ var EMULATOR = (function() {
 			return status;
 		}
 	}
-	// This is a custom game engine emulator that is being worked on, so this is unfinished.
-	return CPU;
+	
 })();
