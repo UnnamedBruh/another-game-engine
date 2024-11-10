@@ -103,7 +103,7 @@ var EMULATOR = (function() {
 								break;
 							case 3:
 								i++;
-								accumulators[accumulatorTarget] = this.memory[instructions[i]];
+								accumulators[accumulatorTarget] += this.memory[instructions[i]];
 								break;
 						}
 						break;
