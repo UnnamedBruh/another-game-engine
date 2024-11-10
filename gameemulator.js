@@ -226,16 +226,16 @@ var EMULATOR = (function(canvas) {
 						break;
 					case "UTF16STRING":
 						num = literal.slice(1, -1);
-						const len = num.length;
-						let char = 0;
-						for (let i = 0; i < len; i++) {
-							char = num.codePointAt(i);
-							if (char === 0) {
-								result.push(char, char);
+						const len2 = num.length;
+						let char2 = 0;
+						for (let i = 0; i < len2; i++) {
+							char2 = num.codePointAt(i);
+							if (char2 === 0) {
+								result.push(char2, char2);
 								console.warn("COMPILATION:\n/!\\ It is not recommended to include any nullish characters in any [STRING] type! Doing so can lead to security vulnerabilities, and confusion with string literals!");
 								return result;
 							}
-							result.push(char % 256, char << 8);
+							result.push(char2 % 256, char2 << 8);
 						}
 						result.push(0, 0);
 						break;
