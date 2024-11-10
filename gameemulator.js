@@ -267,7 +267,7 @@ var EMULATOR = (function(canvas) {
 						i++;
 						old = tokens[i].slice(1, -1);
 						i++;
-						arr.push(types[old], ...handleType(old, tokens[i]));
+						arr.push(2, types[old], ...handleType(old, tokens[i]));
 				}
 			}
 			arr.push(0);
